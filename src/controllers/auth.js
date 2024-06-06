@@ -6,7 +6,7 @@ const register = async (req, res) => {
     if(!name || !password || !phone) {
       return res.status(400).json({
         err: 1,
-        mes : "Missing input !"
+        msg : "Missing input !"
       })
     }
     const response = await authService.registerService({name , password , phone})
@@ -14,7 +14,7 @@ const register = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       err: -1,
-      mes : "Error from server" + error,
+      msg : "Error from server" + error,
     })
   }
 };
@@ -26,7 +26,7 @@ const login = async (req, res) => {
     if( !password || !phone) {
       return res.status(400).json({
         err: 1,
-        mes : "Missing input !"
+        msg : "Missing input !"
       })
     }
     const response = await authService.loginService({ password , phone})
@@ -34,7 +34,7 @@ const login = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       err: -1,
-      mes : "Error from server" + error,
+      msg : "Error from server" + error,
     })
   }
 };

@@ -24,13 +24,11 @@ module.exports = {
         type: Sequelize.STRING
       },
       created: {
-        type: 'TIMESTAMP' ,
-        allowNull : true
-      },
-      expire: {
-        type: 'TIMESTAMP' ,
-        allowNull : true
-      },
+        type: Sequelize.DATE
+    },
+    expired: {
+      type: Sequelize.DATE
+  },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

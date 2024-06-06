@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   image.init({
-    image: DataTypes.STRING,
+    image: DataTypes.TEXT,
   }, {
     sequelize,
     modelName: 'image',

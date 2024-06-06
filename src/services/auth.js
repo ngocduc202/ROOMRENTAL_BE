@@ -24,7 +24,7 @@ export const registerService = ({phone , password , name}) => new Promise(async 
     const token = response[1] &&  jwt.sign({id : response[0].id , phone : response[0].phone} , process.env.SECRET_KEY , {expiresIn : '2d'})
     resolve({
       err: token ? 0 : 2,
-      mes : token ? "Register is successfully !" : "Phone number is existed !" ,
+      msg : token ? "Register is successfully !" : "Phone number is existed !" ,
       token : token || null
     })
 
@@ -45,20 +45,20 @@ export const loginService = ({phone , password}) => new Promise(async (resolve, 
       if(checkPassword){
         const token = jwt.sign({id : response.id , phone : response.phone} , process.env.SECRET_KEY , {expiresIn : '2d'})
         resolve({
-          err : 2,
-          mes : "Login successfully !",
+          err : 0,
+          msg : "Login successfully !",
           token : token
         })
       }else{
         resolve({
           err : 1,
-          mes : "Wrong password !"
+          msg : "Sai mật khẩu !"
         })
       }
     }else{
       resolve({
         err : 2,
-        mes : "Phone number is not existed !"
+        msg : "Số điện thoại không tồn tại !"
       })
     }
 
