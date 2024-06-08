@@ -2,9 +2,9 @@ import db from "../models";
 import bcrypt from "bcryptjs";
 import { v4 } from "uuid";
 require('dotenv').config()
-import chothuecanho from '../../data/chothuecanho.json'
-const dataBody = chothuecanho.body
+import chothuephongtro from '../../data/chothuephongtro.json'
 import generateCode from '../ultis/generateCode'
+const dataBody = chothuephongtro.body
 
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
@@ -14,7 +14,7 @@ export const insertService = () => new Promise(async (resolve, reject) => {
   try {
     dataBody.forEach(async (item) => {
       let postId = v4();
-      let labelCode = generateCode(4)
+      let labelCode = generateCode(item?.header?.class?.classType)
       let attributeId = v4()
       let userId = v4()
       let imageId = v4()
@@ -25,8 +25,8 @@ export const insertService = () => new Promise(async (resolve, reject) => {
         star : item?.header?.star,
         labelCode,
         address : item?.header?.address,
-        attributeId,
-        categoryCode : "CTCH",
+        attributesId : attributeId,
+        categoryCode : "CHPT",
         description : JSON.stringify(item?.mainContent?.content),
         userId,
         overviewId ,
@@ -43,9 +43,9 @@ export const insertService = () => new Promise(async (resolve, reject) => {
         id : imageId,
         image: JSON.stringify(item?.images)
       })
-      await db.Label.create({
-        code : labelCode,
-        value : item?.header?.class?.classType
+      await db.Label.findOrCreate({
+        where : {code : labelCode},
+        defaults : {code : labelCode , value : item?.header?.class?.classType}
       })
       await db.overview.create({
         id: overviewId,
