@@ -2,9 +2,12 @@ import db from "../models";
 import bcrypt from "bcryptjs";
 import { v4 } from "uuid";
 require('dotenv').config()
-import chothuephongtro from '../../data/chothuephongtro.json'
+import nhachothue from '../../data/nhachothue.json'
 import generateCode from '../ultis/generateCode'
-const dataBody = chothuephongtro.body
+import { dataArea, dataPrice } from "../ultis/data";
+import { getNumberFromString } from "../ultis/common";
+const dataBody = nhachothue.body
+
 
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
@@ -19,6 +22,8 @@ export const insertService = () => new Promise(async (resolve, reject) => {
       let userId = v4()
       let imageId = v4()
       let overviewId = v4()
+      let currentArea = getNumberFromString(item?.header?.attributes?.acreage)
+      let currentPrice = getNumberFromString(item?.header?.attributes?.price)
       await db.Post.create({
         id : postId,
         title : item?.header?.title,
@@ -26,11 +31,13 @@ export const insertService = () => new Promise(async (resolve, reject) => {
         labelCode,
         address : item?.header?.address,
         attributesId : attributeId,
-        categoryCode : "CHPT",
+        categoryCode : "NCT",
         description : JSON.stringify(item?.mainContent?.content),
         userId,
         overviewId ,
-        imagesId : imageId
+        imagesId : imageId,
+        areaCode: dataArea.find(area => area.max > currentArea && area.min <= currentArea)?.code,
+        priceCode: dataPrice.find(price => price.max > currentPrice && price.min <= currentPrice)?.code
       })
       await db.Attribute.create({
         id : attributeId,
