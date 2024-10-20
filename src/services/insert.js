@@ -72,8 +72,37 @@ export const insertService = () => new Promise(async (resolve, reject) => {
         zalo : item?.contact?.content.find(i => i.name === "Zalo")?.content
       })
     })
+    provinceCodes?.forEach(async (item) => {
+      await db.Province.create(item)
+  })
+  labelCodes?.forEach(async (item) => {
+      await db.Label.create(item)
+  })
+
     resolve("Done")
   } catch (error) {
     reject(error);
   }
 });
+
+export const createPricesAndAreas = () => new Promise((resolve, reject) => {
+  try {
+      dataPrice.forEach(async (item, index) => {
+          await db.Price.create({
+              code: item.code,
+              value: item.value,
+              order: index + 1
+          })
+      })
+      dataArea.forEach(async (item, index) => {
+          await db.Area.create({
+              code: item.code,
+              value: item.value,
+              order: index + 1
+          })
+      })
+      resolve('OK')
+  } catch (err) {
+      reject(err)
+  }
+})

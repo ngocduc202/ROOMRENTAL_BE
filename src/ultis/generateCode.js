@@ -15,7 +15,7 @@ const generateCode = (value) => {
     length = index
 
   }
-  return `${value.charAt(0)}${ouput}`.toUpperCase();
+  return `${value.charAt(2)}${ouput}`.toUpperCase();
 };
 
 
