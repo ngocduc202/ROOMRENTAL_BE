@@ -72,12 +72,12 @@ export const insertService = () => new Promise(async (resolve, reject) => {
         zalo : item?.contact?.content.find(i => i.name === "Zalo")?.content
       })
     })
-    provinceCodes?.forEach(async (item) => {
-      await db.Province.create(item)
-  })
-  labelCodes?.forEach(async (item) => {
-      await db.Label.create(item)
-  })
+  //   provinceCodes?.forEach(async (item) => {
+  //     await db.Province.create(item)
+  // })
+  // labelCodes?.forEach(async (item) => {
+  //     await db.Label.create(item)
+  // })
 
     resolve("Done")
   } catch (error) {
