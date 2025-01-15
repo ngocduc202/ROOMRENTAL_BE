@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'user'
       })
 
+      Post.belongsTo(models.overview, {
+        foreignKey: 'overviewId',
+        targetKey: 'id',
+        as: 'overviews'
+      })
     }
   }
   Post.init({

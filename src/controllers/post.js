@@ -53,3 +53,33 @@ export const createNewPost = async (req, res) => {
     });
   }
 };
+
+export const getPostsLimitAdmin = async (req, res) => {
+  const { page, ...query } = req.query;
+  const {id} = req.user
+  try {
+    if(!id) return res.status(400).json({err: 1 , msg : "Missing input !!"})
+    const response = await service.getPostsLimitAdminService(page , id , query);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      err: -1,
+      msg: "Failed at post controller: " + error,
+    });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  const {postId , overviewId, imagesId , attributesId , ...payload} = req.body
+  const {id} = req.user
+  try {
+    if(!postId || !id || !overviewId || !imagesId || !attributesId) return res.status(400).json({err: 1 , msg : "Missing input !!"})
+    const response = await service.updatePost(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      err: -1,
+      msg: "Failed at post controller: " + error,
+    });
+  }
+};

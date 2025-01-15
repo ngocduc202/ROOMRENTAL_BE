@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import { v4 as generateId} from "uuid"
 import generateCode from "../ultis/generateCode"
 import moment from "moment";
+import generateDate from "../ultis/genarateDate";
 
 export const getPostsService = () => new Promise (async (resolve, reject) => {
   try {
@@ -88,7 +89,7 @@ export const createNewPostService = (body , userId) => new Promise (async (resol
     const overviewId = generateId()
     const labelCode = generateCode(body.label)
     const hashtag = `#${Math.floor(Math.random() * Math.pow(10, 6))}`
-    const currentDate = new Date()
+    const currentDate = generateDate()
     await db.Post.create({
       id: generateId(),
       title: body.title,
@@ -124,8 +125,8 @@ export const createNewPostService = (body , userId) => new Promise (async (resol
       type: body?.category,
       target: body?.target,
       bonus: "Tin thường",
-      created: currentDate.toString(),
-      expired: currentDate.setDate(currentDate.getDate() + 10),
+      created: currentDate.today,
+      expired: currentDate.expireDay,
     })
     await db.Province.findOrCreate({
       where: {
@@ -157,3 +158,101 @@ export const createNewPostService = (body , userId) => new Promise (async (resol
     reject(error)
   }
 })
+
+export const getPostsLimitAdminService = (page , id, query) => new Promise (async (resolve, reject) => {
+  try {
+    let offset = (!page || +page <= 1) ? 0 : (+page - 1)
+    const queries = {...query , userId: id}
+    const response = await db.Post.findAndCountAll({
+      where: queries,
+      raw : true ,
+      nest : true,
+      offset : offset * +process.env.LIMIT,
+      limit : +process.env.LIMIT,
+      order : [['createdAt' , 'DESC']],
+      include : [
+        {model : db.image, as : 'images',attributes : ['image']},
+        {model : db.Attribute, as : 'attributes',attributes : ['price','acreage','published','hashtag']},
+        {model : db.User, as : 'user',attributes : ['name','zalo','phone']},
+        {model : db.overview, as : 'overviews'}
+      ] ,
+      // attributes :['id' , 'title' , 'star' , 'address' , 'description']
+    })
+    resolve({
+      err : response ? 0 : 1,
+      msg : response ? "Success" : "Fail to get posts",
+      response
+    })
+  } catch (error) {
+    reject(error)
+  }
+})
+
+
+export const updatePost = ({postId , overviewId, imagesId , attributesId , ...body}) => new Promise (async (resolve, reject) => {
+  try {
+    const labelCode = generateCode(body.label)
+    await db.Post.update({
+      title: body.title,
+      labelCode,
+      address: body.address || null,
+      categoryCode: body.categoryCode,
+      description : JSON.stringify(body.description) || null,
+      areaCode : body.areaCode || null,
+      priceCode : body.priceCode || null,
+      provinceCode: body?.province?.includes("Thành phố") ? generateCode(body?.province?.replace('Thành phố ' , '')) : generateCode(body?.province?.replace('Tỉnh ' , '')) || null,
+      priceNumber: body.priceNumber,
+      areaNumber: body.areaNumber,
+    },{
+      where: {id: postId}
+    })
+    await db.Attribute.update({
+      price: +body?.priceNumber < 1 ? `${+body?.priceNumber * 1000000} đồng/tháng` : `${body?.priceNumber} triệu/tháng`,
+      acreage: `${body?.areaNumber} m²`,
+    } , {
+      where: {id: attributesId}
+    })
+    await db.image.update({
+      image: JSON.stringify(body?.images)
+    } , {
+      where: {id: imagesId}
+    })
+    await db.overview.update({
+      area: body?.label,
+      type: body?.category,
+      target: body?.target,
+    }, {
+      where: {
+        id: overviewId
+      }
+    })
+    await db.Province.findOrCreate({
+      where: {
+        [Op.or] : [
+          {value : body?.province?.replace('Thành phố ' , '')},
+          {value : body?.province?.replace('Tỉnh ' , '')},
+        ]
+      },
+      defaults:{
+        code : body?.province?.includes("Thành phố") ? generateCode(body?.province?.replace('Thành phố ' , '')) : generateCode(body?.province?.replace('Tỉnh ' , '')),
+        value : body?.province?.includes("Thành phố") ? body?.province?.replace('Thành phố ' , '') : body?.province?.replace('Tỉnh ' , ''),
+      }
+    })
+    await db.Label.findOrCreate({
+      where: {
+        code : labelCode
+      },
+      defaults:{
+        code : labelCode ,
+        value : body?.label
+      }
+    })
+    resolve({
+      err : 0,
+      msg : "Updated"
+    })
+  } catch (error) {
+    reject(error)
+  }
+})
+
