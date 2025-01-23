@@ -46,7 +46,8 @@ export const getPostsLimitService = (page , {limitPost ,order , ...query} , {pri
         {model : db.image, as : 'images',attributes : ['image']},
         {model : db.Attribute, as : 'attributes',attributes : ['price','acreage','published','hashtag']},
         {model : db.User, as : 'user',attributes : ['name','zalo','phone' , 'avatar', 'createdAt']},
-        {model: db.overview, as: 'overviews'}
+        {model: db.overview, as: 'overviews'},
+        {model: db.Label, as: 'labelData' , attributes: ['code', 'value']},
       ] ,
       attributes :['id' , 'title' , 'star' , 'address' , 'description']
     })
