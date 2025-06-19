@@ -1,24 +1,18 @@
 {
   "development": {
-    "username": "root",
-    "password": "123456",
-    "database": "rentalroomdb",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "logging": false
-  },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "url": "postgresql://db_roomrental_user:i58OrndwwEzRCPubNmFtPI3A7YUCQmxt@dpg-cu8ur2d6l47c73d3iukg-a.singapore-postgres.render.com/db_roomrental",
+    "dialect": "postgres",
+    "logging": false,
+    "dialectOptions": {
+      "ssl": false
+    }
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "url": "postgresql://db_roomrental_user:i58OrndwwEzRCPubNmFtPI3A7YUCQmxt@dpg-cu8ur2d6l47c73d3iukg-a.singapore-postgres.render.com/db_roomrental",
+    "dialect": "postgres",
+    "logging": false,
+    "dialectOptions": {
+      "ssl": false
+    }
   }
 }
